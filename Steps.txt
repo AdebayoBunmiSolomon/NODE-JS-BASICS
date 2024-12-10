@@ -1,0 +1,35 @@
+To create the node project
+**Step 1 do npm init -y
+**Step 2 npm install --save-dev typescript
+**Step 3 npx tsc --init (This will create a tsconfig.json file)
+**Step 4 after creating tsconfig.json file, make sure that the tsconfig.json file is in this order 
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+**Step 5 npm install express --save-dev @types/express @types/node
+**Step 6 npm install nodemon ts-node --save-dev (this package helps to restart the server when there is changes in any of the files in src folder)
+**Step 7 create a nodemon.json file and let it be in this order 
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["dist"],
+  "exec": "ts-node ./src/index.ts"
+}
+**Step 8 go to package.json and go to the "scripts":{} and restructure like this 
+  "scripts": {
+    "start": "nodemon",
+    "build": "tsc",
+    "dev": "nodemon"
+  },
+**after which, go to src/index.ts and write a console.log("Hello from my node server") and test in your terminal by doing npm start or npm run dev
