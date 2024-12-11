@@ -32,4 +32,7 @@ To create the node project
     "build": "tsc",
     "dev": "nodemon"
   },
-**after which, go to src/index.ts and write a console.log("Hello from my node server") and test in your terminal by doing npm start or npm run dev
+**Step 9 after which, go to src/index.ts and write a console.log("Hello from my node server") and test in your terminal by doing npm start or npm run dev
+**Step 10 do npm install to install the following npm install cookie-parser compression cors --save-dev @types/cookie-parser @types/compression @types/cors
+**Step 11 go to mongo db online and create a cluster then copy your username and password for the cluster. also, copy the connection string as well..
+**Step 12 do npm install mongoose --save-dev @types/mongoose to use mongodb in your NodeJS backend...
