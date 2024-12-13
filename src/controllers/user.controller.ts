@@ -1,5 +1,8 @@
 import express from "express";
-import { IUserInterface } from "../interface/user.interface";
+import {
+  ILoginInterface,
+  IRegisterInterface,
+} from "../interface/user.interface";
 import {
   createUser,
   getUserByEmail,
@@ -12,10 +15,56 @@ import {
   successResponse,
 } from "../helper";
 
-export const register: express.RequestHandler<{}, {}, IUserInterface> = async (
+export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
   req,
   res
 ) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json(errorResponse("All fields are required"));
+      return;
+    }
+    const userExists = await getUserByEmail(email).select(
+      "+authentication.salt +authentication.password"
+    );
+    if (!userExists) {
+      res.status(200).json(errorResponse("Invalid email address"));
+      return;
+    }
+
+    const expectedHash = authentication(
+      String(userExists?.authentication?.salt),
+      password
+    );
+    if (String(userExists?.authentication?.password) !== expectedHash) {
+      res.status(200).json(errorResponse("Invalid login credentials"));
+      return;
+    }
+    // Generate a new session token and update it in the database
+    const salt = random();
+    if (userExists.authentication) {
+      userExists.authentication.sessionToken = authentication(
+        salt,
+        userExists._id.toString()
+      );
+      await userExists.save(); // Save changes to the database
+    }
+    res.cookie("NODE-JS-BASICS", userExists?.authentication?.sessionToken, {
+      domain: "localhost",
+      path: "/",
+    });
+    res.status(200).json(successResponse("Login successful", userExists));
+  } catch (err: any) {
+    res.status(400).json(errorResponse(`Error processing request, ${err}`));
+  }
+};
+
+export const register: express.RequestHandler<
+  {},
+  {},
+  IRegisterInterface
+> = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if (!email || !username || !password) {
@@ -39,6 +88,7 @@ export const register: express.RequestHandler<{}, {}, IUserInterface> = async (
       authentication: {
         salt: salt,
         password: authentication(salt, password),
+        sessionToken: "",
       },
     });
     res
