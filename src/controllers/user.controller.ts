@@ -15,6 +15,10 @@ import {
   errorResponse,
   successResponse,
 } from "../helper";
+import {
+  loginValidationSchema,
+  registerValidationSchema,
+} from "../validators/user.validators";
 
 export const getAllUsers: express.RequestHandler<{}, {}, any> = async (
   req,
@@ -38,11 +42,12 @@ export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
   res
 ) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400).json(errorResponse("All fields are required"));
+    const { error } = loginValidationSchema.validate(req.body);
+    if (error) {
+      res.status(400).json(errorResponse(`${error.message}`, null));
       return;
     }
+    const { email, password } = req.body;
     const userExists = await getUserByEmail(email).select(
       "+authentication.salt +authentication.password"
     );
@@ -56,7 +61,7 @@ export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
       password
     );
     if (String(userExists?.authentication?.password) !== expectedHash) {
-      res.status(200).json(errorResponse("Invalid login credentials"));
+      res.status(200).json(errorResponse("Invalid login credentials", null));
       return;
     }
     // Generate a new session token and update it in the database
@@ -75,7 +80,9 @@ export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
     });
     res.status(200).json(successResponse("Login successful", userExists));
   } catch (err: any) {
-    res.status(400).json(errorResponse(`Error processing request, ${err}`));
+    res
+      .status(400)
+      .json(errorResponse(`Error processing request, ${err}`, null));
   }
 };
 
@@ -85,11 +92,13 @@ export const register: express.RequestHandler<
   IRegisterInterface
 > = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    if (!email || !username || !password) {
-      res.status(400).json({ message: "All fields are required" });
+    // Validate the request body
+    const { error } = registerValidationSchema.validate(req.body);
+    if (error) {
+      res.status(400).json(errorResponse(`${error?.message}`, null));
       return;
     }
+    const { username, email, password } = req.body;
     const emailExists = await getUserByEmail(email.toLowerCase());
     if (emailExists) {
       res.status(200).json(errorResponse("Email already exists"));
