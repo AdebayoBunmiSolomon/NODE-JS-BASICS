@@ -7,6 +7,7 @@ import {
   createUser,
   getUserByEmail,
   getUserByUsername,
+  getUsers,
 } from "../functions/user.functions";
 import {
   authentication,
@@ -14,6 +15,23 @@ import {
   errorResponse,
   successResponse,
 } from "../helper";
+
+export const getAllUsers: express.RequestHandler<{}, {}, any> = async (
+  req,
+  res
+) => {
+  try {
+    const users = await getUsers();
+    if (users) {
+      res
+        .status(200)
+        .json(successResponse("Users fetched successfully", users));
+      return;
+    }
+  } catch (err: any) {
+    res.status(400).json(errorResponse(`Error processing request, ${err}`));
+  }
+};
 
 export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
   req,
@@ -50,6 +68,7 @@ export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
       );
       await userExists.save(); // Save changes to the database
     }
+    console.log("token is ", userExists?.authentication?.sessionToken);
     res.cookie("NODE-JS-BASICS", userExists?.authentication?.sessionToken, {
       domain: "localhost",
       path: "/",
