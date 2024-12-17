@@ -1,6 +1,7 @@
 import crypto from "crypto";
+import bcrypt from "bcrypt";
 
-const SECRET = "NODE-JS-BASICS";
+export const SECRET = "NODE-JS-BASICS";
 
 export const random = () => {
   return crypto.randomBytes(128).toString("base64");
@@ -11,6 +12,14 @@ export const authentication = (salt: string, password: string) => {
     .createHmac("sha256", [salt, password].join("/"))
     .update(SECRET)
     .digest("hex");
+};
+
+export const generateSalt = async () => {
+  return await bcrypt.genSalt(10);
+};
+
+export const passwordHash = async (password: any, salt: any) => {
+  return await bcrypt.hash(password, salt);
 };
 
 export const successResponse = (message: string, data: any = null) => {

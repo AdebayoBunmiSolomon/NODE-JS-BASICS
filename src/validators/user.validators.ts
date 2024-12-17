@@ -20,7 +20,7 @@ export const registerValidationSchema = Joi.object<IRegisterInterface>({
 
 export const loginValidationSchema = Joi.object<ILoginInterface>({
   email: Joi.string().email().required().messages({
-    "string.empty": "Username is empty",
+    "string.empty": "email is empty",
     "string.email": "Email format is incorrect",
   }),
   password: Joi.string().required().messages({
