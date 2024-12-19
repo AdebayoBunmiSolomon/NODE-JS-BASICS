@@ -12,6 +12,7 @@ import {
 } from "../functions/user.functions";
 import {
   errorResponse,
+  generateOTP,
   generateSalt,
   passwordHash,
   SECRET,
@@ -23,6 +24,7 @@ import {
 } from "../validators/user.validators";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { createOtp } from "../functions/otp.functions";
 
 export const logout: express.RequestHandler<{}, {}, ILogOutInterface> = async (
   req,
@@ -51,7 +53,7 @@ export const register: express.RequestHandler<
   {},
   {},
   IRegisterInterface
-> = async (req, res) => {
+> = async (req, res, next) => {
   try {
     // Validate the request body
     const { error } = registerValidationSchema.validate(req.body);
@@ -60,25 +62,48 @@ export const register: express.RequestHandler<
       return;
     }
     const { username, email, password } = req.body;
+    //validate if email already exists
     const emailExists = await getUserByEmail(email.toLowerCase());
     if (emailExists) {
       res.status(200).json(errorResponse("Email already exists", null));
       return;
     }
+    //validate if username already exists
     const usernameExists = await getUserByUsername(username.toLowerCase());
     if (usernameExists) {
       res.status(200).json(errorResponse("username already exists", null));
       return;
     }
+    //hash password and save to DB
     const salt = await generateSalt();
     const hashedPassword = await passwordHash(password, salt);
     const createdUser = await createUser({
       username: username.toLowerCase(),
       email: email.toLowerCase(),
       password: hashedPassword,
+      activated: false,
     });
-    res.status(200).json(successResponse("User registered successfully", null));
-    return;
+    //generate OTP and save to db
+    const otp = generateOTP();
+    const createdOtp = await createOtp({
+      email: email.toLowerCase(),
+      otp: otp,
+    });
+
+    // Attach OTP to the request object for the next middleware
+    req.body.generatedOtp = createdOtp?.otp; // Add the generated OTP to the request body
+
+    res.status(200).json(
+      successResponse("User registered successfully", {
+        username: createdUser?.username,
+        email: createdUser?.email,
+        sessionToken: createdUser?.sessionToken,
+        otp: createdOtp?.otp,
+        otpCreatedAt: createdOtp?.createdAt,
+        otpExpiresAt: createdOtp?.expiresAt,
+      })
+    );
+    return next();
   } catch (err: any) {
     res.status(400).json(errorResponse(`Error processing request, ${err}`));
   }

@@ -1,7 +1,22 @@
 import express, { NextFunction } from "express";
 import { errorResponse, SECRET } from "../helper";
-import { getUserBySessionToken } from "../functions/user.functions";
+import {
+  getUserByEmail,
+  getUserBySessionToken,
+} from "../functions/user.functions";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "ptechnologiez@gmail.com",
+    pass: "fxdm tucl nfsm pebl",
+  },
+});
 
 export const isAuthenticated = async (
   req: express.Request,
@@ -42,5 +57,34 @@ export const isAuthenticated = async (
     return next();
   } catch (err) {
     res.status(400).json(errorResponse(`Error processing request ${err}`));
+  }
+};
+
+export const sendOTPToEmail = async (
+  req: express.Request,
+  res: express.Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, generatedOtp } = req.body;
+    const userExists = await getUserByEmail(email.toLowerCase());
+    if (!userExists) {
+      res
+        .status(200)
+        .json(errorResponse(`No user exists with email:${email}`, null));
+      return;
+    }
+
+    const emailOptions = {
+      from: "ptechnologiez@gmail.com",
+      to: email,
+      subject: "NODE-JS-BASICS",
+      text: `Your OTP is ${generatedOtp}`,
+    };
+    await transporter.sendMail(emailOptions);
+    console.log(`OTP sent successfully to ${email}`);
+    return next();
+  } catch (err: any) {
+    res.status(400).json(errorResponse(`Error sending otp to email ${err}`));
   }
 };
