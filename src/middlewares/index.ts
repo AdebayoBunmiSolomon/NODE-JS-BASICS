@@ -67,18 +67,10 @@ export const sendOTPToEmail = async (
 ) => {
   try {
     const { email, generatedOtp } = req.body;
-    const userExists = await getUserByEmail(email.toLowerCase());
-    if (!userExists) {
-      res
-        .status(200)
-        .json(errorResponse(`No user exists with email:${email}`, null));
-      return;
-    }
-
     const emailOptions = {
-      from: "ptechnologiez@gmail.com",
+      from: "NODE JS BASICS",
       to: email,
-      subject: "NODE-JS-BASICS",
+      subject: "One Time Password",
       text: `Your OTP is ${generatedOtp}`,
     };
     await transporter.sendMail(emailOptions);

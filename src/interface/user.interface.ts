@@ -13,3 +13,13 @@ export interface ILoginInterface {
 export interface ILogOutInterface {
   email: string;
 }
+
+export interface IActivateAccount {
+  email: string;
+  otp: string;
+}
+
+export interface IResendOTP {
+  email: string;
+  generatedOtp: string;
+}
