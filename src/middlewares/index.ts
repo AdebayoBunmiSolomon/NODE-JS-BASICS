@@ -1,9 +1,6 @@
 import express, { NextFunction } from "express";
 import { errorResponse, SECRET } from "../helper";
-import {
-  getUserByEmail,
-  getUserBySessionToken,
-} from "../functions/user.functions";
+import { getUserBySessionToken } from "../functions/user.functions";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import nodemailer from "nodemailer";
 

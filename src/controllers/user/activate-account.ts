@@ -35,17 +35,18 @@ export const activateAccount: express.RequestHandler<
     }
 
     // Convert expiresAt (which is a string) to a Date object
-    const expiresAt = new Date(otpExists.expiresAt); // Converts the ISO string to a Date object
-    const currentDateUTC = new Date().toISOString();
-    if (new Date(currentDateUTC) > expiresAt) {
+    const currentDateUTC = new Date();
+    if (currentDateUTC > otpExists?.expiresAt) {
+      console.log("Current date is:", currentDateUTC);
+      console.log("OTP Expiry date is:", otpExists?.expiresAt);
       res.status(200).json(errorResponse("OTP is already expired", null));
       return;
     }
 
-    if (userExists) {
-      userExists.activated = true;
-      await userExists.save();
-    }
+    // if (userExists) {
+    //   userExists.activated = true;
+    //   await userExists.save();
+    // }
     res.status(200).json(successResponse("User activated successfully"));
   } catch (err: any) {
     res.status(400).json(errorResponse(`Error processing request`, err));
