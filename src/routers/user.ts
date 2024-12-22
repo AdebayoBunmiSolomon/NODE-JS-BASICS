@@ -5,6 +5,7 @@ import {
   logout,
   register,
   resendOTP,
+  updateAccount,
 } from "../controllers/user.controller";
 import express from "express";
 import { isAuthenticated, sendOTPToEmail } from "../middlewares";
@@ -16,4 +17,5 @@ export default (router: express.Router) => {
   router.post("/auth/logout", logout);
   router.post("/auth/activate-account", activateAccount);
   router.post("/auth/resend-otp", resendOTP, sendOTPToEmail);
+  router.post("/auth/update-account", updateAccount);
 };

@@ -23,3 +23,9 @@ export interface IResendOTP {
   email: string;
   generatedOtp: string;
 }
+
+export interface IUpdateAccount {
+  id: string;
+  username: string;
+  email: string;
+}
