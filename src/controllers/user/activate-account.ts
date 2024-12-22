@@ -59,10 +59,10 @@ export const activateAccount: express.RequestHandler<
       return;
     }
 
-    // if (userExists) {
-    //   userExists.activated = true;
-    //   await userExists.save();
-    // }
+    if (userExists) {
+      userExists.activated = true;
+      await userExists.save();
+    }
     res.status(200).json(successResponse("User activated successfully"));
   } catch (err: any) {
     res.status(400).json(errorResponse(`Error processing request`, err));

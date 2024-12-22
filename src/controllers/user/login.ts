@@ -20,17 +20,33 @@ export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
     const userExists = await getUserByEmail(email.toLowerCase()).select(
       "+password"
     );
+
+    //validate if user has been activated or not
+    if (!userExists?.activated) {
+      res
+        .status(200)
+        .json(
+          errorResponse(
+            "This account is not yet activated. Please go and activate account",
+            null
+          )
+        );
+      return;
+    }
+
     //validate and check if the user exists by email constraints.
     if (!userExists) {
       res.status(200).json(errorResponse("Invalid email address", null));
       return;
     }
+
     // Validate and compare password
     const isPasswordMatch = await bcrypt.compare(password, userExists.password);
     if (!isPasswordMatch) {
       res.status(400).json(errorResponse("Invalid login credentials", null));
       return;
     }
+
     // Generate JWT with a 1-hour expiry
     const token = jwt.sign(
       {
