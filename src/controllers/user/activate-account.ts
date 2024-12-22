@@ -3,7 +3,10 @@ import { IActivateAccount } from "../../interface/user.interface";
 import { activateAcctValidationSchema } from "../../validators/user.validators";
 import { errorResponse, successResponse } from "../../helper";
 import { getUserByEmail } from "../../functions/user.functions";
-import { getOtp } from "../../functions/otp.functions";
+import {
+  getOtp,
+  getRecentOtpsByEmailAndOtp,
+} from "../../functions/otp.functions";
 
 export const activateAccount: express.RequestHandler<
   {},
@@ -34,9 +37,22 @@ export const activateAccount: express.RequestHandler<
       return;
     }
 
+    const otpExistsWithEmail = await getRecentOtpsByEmailAndOtp(email, otp);
+    if (!otpExistsWithEmail) {
+      res
+        .status(200)
+        .json(
+          errorResponse(
+            `OTP:${otp} and email:${email.toLowerCase()} does not associates`,
+            null
+          )
+        );
+      return;
+    }
+
     // Convert expiresAt (which is a string) to a Date object
     const currentDateUTC = new Date();
-    if (currentDateUTC > otpExists?.expiresAt) {
+    if (currentDateUTC > otpExists.expiresAt) {
       console.log("Current date is:", currentDateUTC);
       console.log("OTP Expiry date is:", otpExists?.expiresAt);
       res.status(200).json(errorResponse("OTP is already expired", null));

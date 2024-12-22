@@ -26,18 +26,11 @@ export const resendOTP: express.RequestHandler<{}, {}, IResendOTP> = async (
 
     //generate OTP, add 5mins expiry time, and save to db
     const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // Expire in 5 minutes
-
-    // Convert expiresAt to system's local timezone
-    const localExpiresAt = new Date(
-      expiresAt.getTime() - expiresAt.getTimezoneOffset() * 60 * 1000
-    );
-    const expiresAtISO = localExpiresAt.toISOString(); // Store as ISO string for MongoDB
 
     const createdOtp = await createOtp({
       email: email.toLowerCase(),
       otp: otp,
-      expiresAt: expiresAtISO,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 mins expiry time,
     });
 
     // Attach OTP to the request object for the next middleware
