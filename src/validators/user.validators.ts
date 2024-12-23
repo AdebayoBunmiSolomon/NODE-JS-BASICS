@@ -1,6 +1,7 @@
 import Joi from "joi";
 import {
   IActivateAccount,
+  IForgotPassword,
   ILoginInterface,
   IRegisterInterface,
   IResendOTP,
@@ -49,9 +50,6 @@ export const resendOTPValidationSchema = Joi.object<IResendOTP>({
 });
 
 export const updateAcctValidationSchema = Joi.object<IUpdateAccount>({
-  id: Joi.string().required().messages({
-    "string.empty": "ID is empty",
-  }),
   username: Joi.string().max(30).required().messages({
     "string.max": "Username must not exceed 30 characters",
     "string.empty": "Username is empty",
@@ -59,5 +57,12 @@ export const updateAcctValidationSchema = Joi.object<IUpdateAccount>({
   email: Joi.string().email().required().messages({
     "string.email": "Email format is incorrect",
     "string.empty": "Email is empty",
+  }),
+});
+
+export const changeUserPasswordValidationSchema = Joi.object<IForgotPassword>({
+  email: Joi.string().required().messages({
+    "string.empty": "Email is empty",
+    "string.email": "Email format is incorrect",
   }),
 });

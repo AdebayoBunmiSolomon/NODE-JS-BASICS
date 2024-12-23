@@ -25,7 +25,11 @@ export interface IResendOTP {
 }
 
 export interface IUpdateAccount {
-  id: string;
   username: string;
   email: string;
+}
+
+export interface IForgotPassword {
+  email: string;
+  generatedOtp: string;
 }
