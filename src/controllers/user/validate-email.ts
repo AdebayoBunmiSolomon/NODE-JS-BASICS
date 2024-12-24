@@ -1,7 +1,7 @@
 import express from "express";
 import { IForgotPassword } from "../../interface/user.interface";
 import { errorResponse, generateOTP, successResponse } from "../../helper";
-import { changeUserPasswordValidationSchema } from "../../validators/user.validators";
+import { forgotPasswordValidationSchema } from "../../validators/user.validators";
 import { getUserByEmail } from "../../functions/user.functions";
 import { createOtp } from "../../functions/otp.functions";
 
@@ -11,7 +11,7 @@ export const validateEmail: express.RequestHandler<
   IForgotPassword
 > = async (req, res, next) => {
   try {
-    const { error } = changeUserPasswordValidationSchema.validate(req.body);
+    const { error } = forgotPasswordValidationSchema.validate(req.body);
     const { email } = req.body;
     if (error) {
       res.status(400).json(errorResponse(error?.message, null));

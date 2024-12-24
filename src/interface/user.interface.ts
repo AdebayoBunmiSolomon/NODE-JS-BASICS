@@ -33,3 +33,10 @@ export interface IForgotPassword {
   email: string;
   generatedOtp: string;
 }
+
+export interface IChangePassword {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}

@@ -1,5 +1,6 @@
 import {
   activateAccount,
+  changePassword,
   getAllUsers,
   login,
   logout,
@@ -20,4 +21,5 @@ export default (router: express.Router) => {
   router.post("/auth/resend-otp", resendOTP, sendOTPToEmail);
   router.put("/auth/update-account/:userId", updateAccount);
   router.post("/auth/forgot-password", validateEmail, sendOTPToEmail);
+  router.post("/auth/change-password", changePassword);
 };

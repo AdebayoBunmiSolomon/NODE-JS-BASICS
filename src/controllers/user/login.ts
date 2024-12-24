@@ -21,6 +21,12 @@ export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
       "+password"
     );
 
+    //validate and check if the user exists by email constraints.
+    if (!userExists) {
+      res.status(200).json(errorResponse("Invalid email address", null));
+      return;
+    }
+
     //validate if user has been activated or not
     if (!userExists?.activated) {
       res
@@ -31,12 +37,6 @@ export const login: express.RequestHandler<{}, {}, ILoginInterface> = async (
             null
           )
         );
-      return;
-    }
-
-    //validate and check if the user exists by email constraints.
-    if (!userExists) {
-      res.status(200).json(errorResponse("Invalid email address", null));
       return;
     }
 

@@ -34,9 +34,9 @@ export const updateAccount: express.RequestHandler<
     const updateUser = await updateUserById(userId, {
       username: username,
       email: email.toLowerCase(),
-      password: isUserExist?.password,
-      sessionToken: isUserExist?.sessionToken,
-      activated: isUserExist?.activated,
+      //password: isUserExist?.password,
+      // sessionToken: isUserExist?.sessionToken,
+      // activated: isUserExist?.activated,
     });
     res
       .status(200)

@@ -1,6 +1,7 @@
 import Joi from "joi";
 import {
   IActivateAccount,
+  IChangePassword,
   IForgotPassword,
   ILoginInterface,
   IRegisterInterface,
@@ -60,9 +61,25 @@ export const updateAcctValidationSchema = Joi.object<IUpdateAccount>({
   }),
 });
 
-export const changeUserPasswordValidationSchema = Joi.object<IForgotPassword>({
+export const forgotPasswordValidationSchema = Joi.object<IForgotPassword>({
   email: Joi.string().required().messages({
     "string.empty": "Email is empty",
     "string.email": "Email format is incorrect",
+  }),
+});
+
+export const changePasswordValidationSchema = Joi.object<IChangePassword>({
+  email: Joi.string().required().messages({
+    "string.empty": "Email is empty",
+    "string.email": "Email format is incorrect",
+  }),
+  oldPassword: Joi.string().required().messages({
+    "string.empty": "Old Password is empty",
+  }),
+  newPassword: Joi.string().required().messages({
+    "string.empty": "new password is empty",
+  }),
+  confirmNewPassword: Joi.string().required().messages({
+    "string.empty": "Confirm new password is empty",
   }),
 });

@@ -18,3 +18,10 @@ export const updateUserById = (id: string, values: Record<string, any>) =>
     values, // Update values
     { new: true } // Options: return the updated document
   ).then((user) => user?.toObject());
+
+export const updateUserByEmail = (email: string, values: Record<string, any>) =>
+  UserModel.findOneAndUpdate(
+    { email: email }, // Filter criteria
+    values, // Update values
+    { new: true } // Options: return the updated document
+  ).then((user) => user?.toObject());
