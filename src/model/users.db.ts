@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, select: false },
   sessionToken: { type: String, default: "", select: false },
   activated: { type: Boolean, default: false, required: true },
+  picture: { type: String, required: true },
 });
 
 export const UserModel = mongoose.model("User", userSchema);

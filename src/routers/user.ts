@@ -10,10 +10,15 @@ import {
   validateEmail,
 } from "../controllers/user.controller";
 import express from "express";
-import { isAuthenticated, sendOTPToEmail } from "../middlewares";
+import { isAuthenticated, sendOTPToEmail, upload } from "../middlewares";
 
 export default (router: express.Router) => {
-  router.post("/auth/register", register, sendOTPToEmail);
+  router.post(
+    "/auth/register",
+    upload.single("picture"),
+    register,
+    sendOTPToEmail
+  );
   router.post("/auth/login", login);
   router.get("/auth/getAllUsers", isAuthenticated, getAllUsers);
   router.post("/auth/logout", logout);

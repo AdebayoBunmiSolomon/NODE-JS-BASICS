@@ -40,6 +40,17 @@ export const register: express.RequestHandler<
       res.status(200).json(errorResponse("username already exists", null));
       return;
     }
+
+    // Check if picture was uploaded
+    const file = req.file; // Multer attaches the uploaded file to req.file
+    let pictureUrl: string | undefined;
+
+    if (file) {
+      pictureUrl = `${req.protocol}://${req.get("host")}/uploads/images/${
+        file.filename
+      }`;
+    }
+
     //hash password and save to DB
     const salt = await generateSalt();
     const hashedPassword = await passwordHash(password, salt);
@@ -48,6 +59,7 @@ export const register: express.RequestHandler<
       email: email.toLowerCase(),
       password: hashedPassword,
       activated: false,
+      picture: pictureUrl,
     });
     //generate OTP, add 5mins expiry time, and save to db
     const otp = generateOTP();
@@ -68,6 +80,7 @@ export const register: express.RequestHandler<
         otp: createdOtp?.otp,
         otpCreatedAt: createdOtp?.createdAt,
         otpExpiresAt: createdOtp?.expiresAt,
+        picture: pictureUrl,
       })
     );
     return next();

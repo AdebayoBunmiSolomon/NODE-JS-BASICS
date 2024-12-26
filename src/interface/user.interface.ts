@@ -3,6 +3,7 @@ export interface IRegisterInterface {
   email: string;
   password: string;
   generatedOtp: string;
+  picture?: Express.Multer.File;
 }
 
 export interface ILoginInterface {

@@ -6,6 +6,7 @@ import compression from "compression";
 import cors from "cors";
 import mongoose from "mongoose";
 import routers from "./routers";
+import path from "path";
 
 const app = express();
 
@@ -30,6 +31,10 @@ app.use(cors(corsOptions));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(
+  "/uploads/images",
+  express.static(path.join(process.cwd(), "uploads/images"))
+); // Save uploaded files statically
 
 const SERVER = http.createServer(app);
 const PORT = 8080;
