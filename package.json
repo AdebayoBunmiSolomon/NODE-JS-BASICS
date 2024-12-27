@@ -21,6 +21,7 @@
     "@types/mongoose": "^5.11.96",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.1",
+    "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.17",
     "bcrypt": "^5.1.1",
     "compression": "^1.7.5",
@@ -36,6 +37,7 @@
   },
   "dependencies": {
     "joi": "^17.13.3",
-    "mongoose": "^8.8.4"
+    "mongoose": "^8.8.4",
+    "node-cron": "^3.0.3"
   }
 }

@@ -7,6 +7,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import routers from "./routers";
 import path from "path";
+import "./jobs/cron-jobs";
 
 const app = express();
 
