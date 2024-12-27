@@ -24,7 +24,11 @@ export const register: express.RequestHandler<
     // Validate the request body
     const { error } = registerValidationSchema.validate(req.body);
     if (error) {
-      res.status(400).json(errorResponse(`${error?.message}`, null));
+      res
+        .status(400)
+        .json(
+          errorResponse(`${error.details.map((err) => err.message)}`, null)
+        );
       return;
     }
     const { username, email, password } = req.body;

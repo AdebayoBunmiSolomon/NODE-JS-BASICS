@@ -28,6 +28,7 @@ export interface IResendOTP {
 export interface IUpdateAccount {
   username: string;
   email: string;
+  picture?: Express.Multer.File;
 }
 
 export interface IForgotPassword {

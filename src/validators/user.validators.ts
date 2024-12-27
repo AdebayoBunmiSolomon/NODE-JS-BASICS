@@ -21,6 +21,34 @@ export const registerValidationSchema = Joi.object<IRegisterInterface>({
   password: Joi.string().required().messages({
     "string.empty": "Password is empty",
   }),
+  picture: Joi.any()
+    .custom((value, helpers) => {
+      const file = helpers.state.ancestors[0].file; // Access the file in req.file
+
+      if (!file) {
+        return helpers.error("any.required", { label: "Picture" });
+      }
+
+      // Check file type
+      const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        return helpers.error("string.mime", { mimeType: file.mimetype });
+      }
+
+      // Check file size (e.g., max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        return helpers.error("file.maxSize", { size: file.size });
+      }
+
+      return value; // Valid file
+    })
+    .messages({
+      "any.required": "Picture is required",
+      "string.mime":
+        "Invalid picture format. Only JPEG, PNG, or GIF are allowed",
+      "file.maxSize": "Picture size exceeds the 5MB limit",
+    }),
 });
 
 export const loginValidationSchema = Joi.object<ILoginInterface>({

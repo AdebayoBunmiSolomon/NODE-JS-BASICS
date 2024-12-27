@@ -30,13 +30,23 @@ export const updateAccount: express.RequestHandler<
       return;
     }
 
+    // Check if picture was uploaded
+    const file = req.file; // Multer attaches the uploaded file to req.file
+    let pictureUrl: string | undefined;
+
+    if (file) {
+      pictureUrl = `${req.protocol}://${req.get("host")}/uploads/images/${
+        file.filename
+      }`;
+    } else {
+      pictureUrl = isUserExist?.picture;
+    }
+
     //update user account
     const updateUser = await updateUserById(userId, {
       username: username,
       email: email.toLowerCase(),
-      //password: isUserExist?.password,
-      // sessionToken: isUserExist?.sessionToken,
-      // activated: isUserExist?.activated,
+      picture: pictureUrl,
     });
     res
       .status(200)
